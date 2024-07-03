@@ -13,4 +13,5 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/login", LoginUser)
 	app.Get("/listGifts", ListGifts)
 	app.Post("/addGift", AddGift)
+	app.Delete("/deleteGift/:userId/:giftId", DeleteGift)
 }

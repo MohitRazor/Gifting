@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"strconv"
 )
 
 // MongoInstance contains the Mongo client and database objects
@@ -97,6 +98,23 @@ func ListAllGifts() ([]Gift, error) {
 
 func AddGiftForUser(gift Gift) error {
 	_, err := mg.Db.Collection("users").InsertOne(context.Background(), gift)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteGiftForUser(userId string, giftId string) error {
+	giftIDInt64, err := strconv.ParseInt(giftId, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	collection := mg.Db.Collection("users")
+	filter := bson.M{"username": userId}
+	update := bson.M{"$pull": bson.M{"gifts": giftIDInt64}}
+
+	_, err = collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		return err
 	}

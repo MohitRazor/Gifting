@@ -65,3 +65,18 @@ func AddGift(c *fiber.Ctx) error {
 		"GiftId": req.ID,
 	})
 }
+
+func DeleteGift(c *fiber.Ctx) error {
+	userId := c.Params("userId")
+	giftId := c.Params("giftId")
+
+	err := DeleteGiftForUser(userId, giftId)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to delete gift",
+		})
+	}
+
+	return c.SendString("Gift deleted successfully")
+}

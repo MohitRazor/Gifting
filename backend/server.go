@@ -6,6 +6,14 @@ import (
 )
 
 func main() {
+
+	// Connect to the database
+	if err := Connect(); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Connected to MongoDB")
+
 	// Initialize a new Fiber app
 	app := fiber.New()
 

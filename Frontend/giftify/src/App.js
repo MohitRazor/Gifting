@@ -8,7 +8,28 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <header className='nav'>
+        <div className="search-bar">
+          <input type="text" placeholder="Search..." />
+          <button>Search</button>
+        </div>
+        <div className="auth-buttons">
+          <button>Login</button>
+          <button>Signup</button>
+        </div>
+      </header>
+      <section className='content-section'>
+        <div className='content-body'>
+        <img src={sloganImageUrl} className="App-slogan" alt="slogan" />
+        <p className='slogan-text'>
+          Gifts for needs and happiness
+        </p>
+        </div>
+        <div id='register' className='register'>
+        <Register />
+        </div>
+      </section>
+      {/* <header className="App-header">
         <div className="header-content">
         <div className="search-bar">
             <input type="text" placeholder="Search..." />
@@ -23,10 +44,10 @@ function App() {
             <button>Signup</button>
           </div>
         </div>
-      </header>
-      <main>
+      </header> */}
+      {/* <main>
         <Register />
-      </main>
+      </main> */}
     </div>
   );
 }

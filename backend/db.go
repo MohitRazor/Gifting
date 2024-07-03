@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"github.com/gofiber/fiber/v2/log"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -16,19 +18,15 @@ var mg MongoInstance
 
 // Database settings (insert your own database name and connection URI)
 const dbName = "user"
-const mongoURI = "mongodb://user:password@localhost:27017/" + dbName
+const mongoURI = "mongodb://localhost:27017/" + dbName
 
+// Connect to the MongoDB database
 // Connect to the MongoDB database
 func Connect() error {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoURI))
 	if err != nil {
 		return err
 	}
-	defer func() {
-		if err := client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
 	db := client.Database(dbName)
 	mg = MongoInstance{
 		Client: client,
@@ -47,21 +45,83 @@ func InsertUser(user User) error {
 }
 
 // FindUser Find a user in the database
-func FindUser(username string) (User, error) {
+func FindUser(email string) (User, error) {
+	log.Info("Finding user with email: ", email)
 	var user User
-	err := mg.Db.Collection("users").FindOne(context.TODO(), User{Username: username}).Decode(&user)
+	err := mg.Db.Collection("users").FindOne(context.TODO(), bson.D{{"email", email}}).Decode(&user)
 	if err != nil {
+		log.Errorf("Error finding user: %v", err)
 		return user, err
 	}
 	return user, nil
 }
 
-// GetGifts Get all gifts from a user
-func GetGifts(username string) ([]int64, error) {
+// GetGiftIdsForUser Get all gifts from a user
+func GetGiftIdsForUser(email string) ([]string, error) {
+	log.Info("Getting gifts for user with email: ", email)
 	var user User
-	err := mg.Db.Collection("users").FindOne(context.TODO(), User{Username: username}).Decode(&user)
+	err := mg.Db.Collection("users").FindOne(context.TODO(), bson.D{{"email", email}}).Decode(&user)
 	if err != nil {
 		return nil, err
 	}
 	return user.Gifts, nil
+}
+
+// InsertGiftForUser Insert a gift for a user
+func InsertGiftForUser(email string, giftId string) error {
+	_, err := mg.Db.Collection("users").UpdateOne(context.TODO(), bson.D{{"email", email}}, bson.M{"$push": bson.M{"gifts": giftId}})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// DeleteGiftForUser Delete a gift for a user
+func DeleteGiftForUser(email string, giftId string) error {
+	_, err := mg.Db.Collection("users").UpdateOne(context.TODO(), bson.D{{"email", email}}, bson.M{"$pull": bson.M{"gifts": giftId}})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func ListAllGifts() ([]Gift, error) {
+	var gifts []Gift
+	cursor, err := mg.Db.Collection("gifts").Find(context.TODO(), bson.M{})
+	if err != nil {
+		return gifts, err
+	}
+	if err = cursor.All(context.TODO(), &gifts); err != nil {
+		return gifts, err
+	}
+	return gifts, nil
+}
+
+func GetGiftById(id string) (Gift, error) {
+	var gift Gift
+	err := mg.Db.Collection("gifts").FindOne(context.TODO(), bson.D{{"_id", id}}).Decode(&gift)
+	if err != nil {
+		return gift, err
+	}
+	return gift, nil
+}
+
+func InsertGift(gift Gift) error {
+	_, err := mg.Db.Collection("gifts").InsertOne(context.TODO(), gift)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetGiftByIds(ids []string) ([]Gift, error) {
+	var gifts []Gift
+	cursor, err := mg.Db.Collection("gifts").Find(context.TODO(), bson.M{"_id": bson.M{"$in": ids}})
+	if err != nil {
+		return gifts, err
+	}
+	if err = cursor.All(context.TODO(), &gifts); err != nil {
+		return gifts, err
+	}
+	return gifts, nil
 }

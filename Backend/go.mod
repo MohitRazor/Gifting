@@ -1,4 +1,4 @@
-module github.com/gifting
+module github.com/razorpay/gifting
 
 go 1.21.11
 

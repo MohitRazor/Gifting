@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -64,4 +66,39 @@ func GetGifts(username string) ([]int64, error) {
 		return nil, err
 	}
 	return user.Gifts, nil
+}
+
+func ListAllGifts() ([]Gift, error) {
+	var gifts []Gift
+	collection := mg.Db.Collection("gifts")
+
+	// Finding all documents in the collection
+	cursor, err := collection.Find(context.Background(), bson.D{})
+	if err != nil {
+		return nil, fmt.Errorf("error finding documents: %v", err)
+	}
+	defer cursor.Close(context.Background())
+
+	// Iterating through the cursor to decode each document into a Gift struct
+	for cursor.Next(context.Background()) {
+		var gift Gift
+		if err := cursor.Decode(&gift); err != nil {
+			return nil, fmt.Errorf("error decoding document: %v", err)
+		}
+		gifts = append(gifts, gift)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cursor error: %v", err)
+	}
+
+	return gifts, nil
+}
+
+func AddGiftForUser(gift Gift) error {
+	_, err := mg.Db.Collection("users").InsertOne(context.Background(), gift)
+	if err != nil {
+		return err
+	}
+	return nil
 }

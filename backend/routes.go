@@ -11,4 +11,6 @@ func SetupRoutes(app *fiber.App) {
 
 	// Routes
 	app.Get("/login", LoginUser)
+	app.Get("/listGifts", ListGifts)
+	app.Post("/addGift", AddGift)
 }

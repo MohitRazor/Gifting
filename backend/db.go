@@ -36,3 +36,32 @@ func Connect() error {
 	}
 	return nil
 }
+
+// InsertUser Insert a new user into the database
+func InsertUser(user User) error {
+	_, err := mg.Db.Collection("users").InsertOne(context.TODO(), user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// FindUser Find a user in the database
+func FindUser(username string) (User, error) {
+	var user User
+	err := mg.Db.Collection("users").FindOne(context.TODO(), User{Username: username}).Decode(&user)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+// GetGifts Get all gifts from a user
+func GetGifts(username string) ([]int64, error) {
+	var user User
+	err := mg.Db.Collection("users").FindOne(context.TODO(), User{Username: username}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	return user.Gifts, nil
+}

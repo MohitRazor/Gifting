@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gofiber/fiber/v2/log"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -62,6 +63,7 @@ func GetGiftIdsForUser(email string) ([]string, error) {
 	var user User
 	err := mg.Db.Collection("users").FindOne(context.TODO(), bson.D{{"email", email}}).Decode(&user)
 	if err != nil {
+		log.Errorf("Error getting gifts for user: %v", err)
 		return nil, err
 	}
 	return user.Gifts, nil
@@ -98,9 +100,17 @@ func ListAllGifts() ([]Gift, error) {
 }
 
 func GetGiftById(id string) (Gift, error) {
-	var gift Gift
-	err := mg.Db.Collection("gifts").FindOne(context.TODO(), bson.D{{"_id", id}}).Decode(&gift)
+	// Convert string id to ObjectID
+	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
+		log.Errorf("Error converting id to ObjectID: %v", err)
+		return Gift{}, err
+	}
+
+	var gift Gift
+	err = mg.Db.Collection("gifts").FindOne(context.TODO(), bson.D{{"_id", objectID}}).Decode(&gift)
+	if err != nil {
+		log.Errorf("Error finding gift: %v", err)
 		return gift, err
 	}
 	return gift, nil
@@ -115,8 +125,19 @@ func InsertGift(gift Gift) error {
 }
 
 func GetGiftByIds(ids []string) ([]Gift, error) {
+	log.Info("Getting gifts by ids: ", ids)
+	var objectIds []primitive.ObjectID
+	for _, id := range ids {
+		objectID, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			log.Errorf("Error converting id to ObjectID: %v", err)
+			return nil, err
+		}
+		objectIds = append(objectIds, objectID)
+
+	}
 	var gifts []Gift
-	cursor, err := mg.Db.Collection("gifts").Find(context.TODO(), bson.M{"_id": bson.M{"$in": ids}})
+	cursor, err := mg.Db.Collection("gifts").Find(context.TODO(), bson.M{"_id": bson.M{"$in": objectIds}})
 	if err != nil {
 		return gifts, err
 	}

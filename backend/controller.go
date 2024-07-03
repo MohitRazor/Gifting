@@ -110,7 +110,7 @@ func AddGift(c *fiber.Ctx) error {
 
 func AddGiftForUser(c *fiber.Ctx) error {
 	email := c.Params("email")
-	giftId := c.Params("giftId")
+	giftId := c.Query("giftId")
 	if email == "" || giftId == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Username and gift ID are required",
@@ -122,6 +122,21 @@ func AddGiftForUser(c *fiber.Ctx) error {
 			"error": "Gift not found",
 		})
 	}
+	// Check if Gift is already added
+	giftIds, err := GetGiftIdsForUser(email)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Error getting gifts for user",
+		})
+	}
+	for _, id := range giftIds {
+		if id == giftId {
+			return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+				"error": "Gift already added",
+			})
+		}
+	}
+
 	if err := InsertGiftForUser(email, gift.ID); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Cannot add gift to user",
@@ -143,7 +158,7 @@ func GetAllGifts(c *fiber.Ctx) error {
 }
 
 func DeleteGift(c *fiber.Ctx) error {
-	email := c.Query("email")
+	email := c.Params("email")
 	giftId := c.Query("giftId")
 	if email == "" || giftId == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

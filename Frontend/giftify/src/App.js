@@ -25,7 +25,9 @@ function App() {
           Gifts for needs and happiness
         </p>
         </div>
-        <div id='register' className='register'>
+      </section>
+      <section>
+      <div id='register' className='register'>
         <Register />
         </div>
       </section>

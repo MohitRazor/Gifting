@@ -76,6 +76,12 @@
   place-items: center;
 }
 
+.register{
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
 .slogan-text{
   color: #fff;
   font-size: 2rem;

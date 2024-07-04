@@ -30,18 +30,63 @@ const Register = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const validationErrors = validateForm();
+  //   if (Object.keys(validationErrors).length > 0) {
+  //     setErrors(validationErrors);
+  //   } else {
+  //     setErrors({});
+  //     setSuccessMessage('Registration successful!');
+  //     // Simulate form submission
+  //     setTimeout(() => {
+  //       console.log(formData);
+  //     }, 1000);
+  //   }
+  // };
+
+
+ 
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      setSuccessMessage('');
     } else {
       setErrors({});
-      setSuccessMessage('Registration successful!');
-      // Simulate form submission
-      setTimeout(() => {
-        console.log(formData);
-      }, 1000);
+      
+      try {
+        const response = await fetch('http://localhost:3001/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+  
+        if (response.ok) {
+          setSuccessMessage('Registration successful!');
+          setFormData({
+            username: '',
+            email: '',
+            password: '',
+            confirmPassword: ''
+          });
+        } else {
+          const errorData = await response.json();
+          console.error('Registration failed:', errorData);
+          setErrors({ backendError: errorData.message });
+          setSuccessMessage('');
+        }
+      } catch (error) {
+        console.error('Error during registration:', error);
+        setErrors({ networkError: 'Failed to connect to server' });
+        setSuccessMessage('');
+      }
     }
   };
 
@@ -50,7 +95,7 @@ const Register = () => {
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="username" style={{ color: 'white' }}>Username</label>
           <input
             type="text"
             id="username"
@@ -61,7 +106,7 @@ const Register = () => {
           {errors.username && <span className="error">{errors.username}</span>}
         </div>
         <div className="form-group">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email" style={{ color: 'white' }}>Email</label>
           <input
             type="email"
             id="email"
@@ -72,7 +117,7 @@ const Register = () => {
           {errors.email && <span className="error">{errors.email}</span>}
         </div>
         <div className="form-group">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password" style={{ color: 'white' }}>Password</label>
           <input
             type="password"
             id="password"
@@ -83,7 +128,7 @@ const Register = () => {
           {errors.password && <span className="error">{errors.password}</span>}
         </div>
         <div className="form-group">
-          <label htmlFor="confirmPassword">Confirm Password</label>
+          <label htmlFor="confirmPassword" style={{ color: 'white' }}>Confirm Password</label>
           <input
             type="password"
             id="confirmPassword"
@@ -95,7 +140,9 @@ const Register = () => {
         </div>
         <button type="submit">Register</button>
       </form>
-      {successMessage && <div className="success">{successMessage}</div>}
+      {successMessage && <div style={{ color: 'white', padding: '10px', marginTop: '10px' }}>{successMessage}</div>}
+      {errors.backendError && <div style={{ color: 'white',  padding: '10px', marginTop: '10px' }}>{errors.backendError}</div>}
+      {errors.networkError && <div style={{ color: 'white', padding: '10px', marginTop: '10px' }}>{errors.networkError}</div>}
     </div>
   );
 };

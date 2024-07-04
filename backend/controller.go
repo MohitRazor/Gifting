@@ -93,9 +93,9 @@ func AddGift(c *fiber.Ctx) error {
 			"error": "Cannot parse JSON",
 		})
 	}
-	if req.Name == "" || req.Price == 0 || req.Link == "" {
+	if req.Name == "" || req.Price == 0 || req.Link == "" || req.Image == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Name, price and link are required",
+			"error": "Name, price, link and image link are required",
 		})
 	}
 	giftId, err := InsertGift(*req)

@@ -12,6 +12,7 @@ type Gift struct {
 	Name  string  `json:"name"`
 	Price float64 `json:"price"`
 	Link  string  `json:"link"`
+	Image string  `json:"image"`
 }
 
 type LoginRequest struct {

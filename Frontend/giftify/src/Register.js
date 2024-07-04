@@ -90,7 +90,7 @@ const Register = () => {
             value={formData.username}
             onChange={handleChange}
           />
-          {errors.username && <span className="error">{errors.username}</span>}
+          {errors.username && <span className="error" style={{ color: 'white' }}>{errors.username}</span>}
         </div>
         <div className="form-group">
           <label htmlFor="email" style={{ color: 'white' }}>Email</label>
@@ -101,7 +101,7 @@ const Register = () => {
             value={formData.email}
             onChange={handleChange}
           />
-          {errors.email && <span className="error">{errors.email}</span>}
+          {errors.email && <span className="error" style={{ color: 'white' }}>{errors.email}</span>}
         </div>
         <div className="form-group">
           <label htmlFor="password" style={{ color: 'white' }}>Password</label>
@@ -112,7 +112,7 @@ const Register = () => {
             value={formData.password}
             onChange={handleChange}
           />
-          {errors.password && <span className="error">{errors.password}</span>}
+          {errors.password && <span className="error" style={{ color: 'white' }}>{errors.password}</span>}
         </div>
         <div className="form-group">
           <label htmlFor="confirmPassword" style={{ color: 'white' }}>Confirm Password</label>
@@ -123,13 +123,13 @@ const Register = () => {
             value={formData.confirmPassword}
             onChange={handleChange}
           />
-          {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
+          {errors.confirmPassword && <span className="error" style={{ color: 'white' }}>{errors.confirmPassword}</span>}
         </div>
-        <button type="submit">Register</button>
+        <button type="submit" style={{color: 'white', background: '#ff666f', padding: '10px', marginTop: '10px', border: 'none' , borderRadius: '18px'}}>Register</button>
       </form>
-      {successMessage && <div style={{ color: 'white', padding: '10px', marginTop: '10px', backgroundColor: 'green' }}>{successMessage}</div>}
-      {errors.backendError && <div style={{ color: 'white', padding: '10px', marginTop: '10px', backgroundColor: 'red' }}>{errors.backendError}</div>}
-      {errors.networkError && <div style={{ color: 'white', padding: '10px', marginTop: '10px', backgroundColor: 'red' }}>{errors.networkError}</div>}
+      {successMessage && <div style={{ color: 'white', padding: '10px', marginTop: '10px'}}>{successMessage}</div>}
+      {errors.backendError && <div style={{ color: 'red', padding: '10px', marginTop: '10px'}}>{errors.backendError}</div>}
+      {errors.networkError && <div style={{ color: 'red', padding: '10px', marginTop: '10px'}}>{errors.networkError}</div>}
     </div>
   );
 };

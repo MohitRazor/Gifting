@@ -1,5 +1,6 @@
 import React from 'react';
 import Register from './Register';
+import Login from './Login';
 import './App.css';
 
 function App() {
@@ -25,10 +26,18 @@ function App() {
           Gifts for needs and happiness
         </p>
         </div>
-        <div id='register' className='register'>
+      </section>
+      <section>
+      <div id='register' className='register'>
         <Register />
         </div>
       </section>
+      <section>
+      <div id='register' className='register'>
+        <Login />
+        </div>
+      </section>
+
       {/* <header className="App-header">
         <div className="header-content">
         <div className="search-bar">

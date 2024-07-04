@@ -98,8 +98,8 @@ const Register = () => {
           <label htmlFor="username" style={{ color: 'white' }}>Username</label>
           <input
             type="text"
-            id="username"
-            name="username"
+            id="Phone Number"
+            name="Phone Number"
             value={formData.username}
             onChange={handleChange}
           />
@@ -138,7 +138,7 @@ const Register = () => {
           />
           {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
         </div>
-        <button type="submit">Register</button>
+        <button type="submit" >Register</button>
       </form>
       {successMessage && <div style={{ color: 'white', padding: '10px', marginTop: '10px' }}>{successMessage}</div>}
       {errors.backendError && <div style={{ color: 'white',  padding: '10px', marginTop: '10px' }}>{errors.backendError}</div>}

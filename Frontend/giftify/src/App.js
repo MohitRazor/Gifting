@@ -1,5 +1,6 @@
 import React from 'react';
 import Register from './Register';
+import Login from './Login';
 import './App.css';
 
 function App() {
@@ -31,6 +32,12 @@ function App() {
         <Register />
         </div>
       </section>
+      <section>
+      <div id='register' className='register'>
+        <Login />
+        </div>
+      </section>
+
       {/* <header className="App-header">
         <div className="header-content">
         <div className="search-bar">

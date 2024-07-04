@@ -11,9 +11,9 @@ func RegisterUser(c *fiber.Ctx) error {
 			"error": "Cannot parser JSON",
 		})
 	}
-	if user.Email == "" || user.Password == "" {
+	if user.Email == "" || user.Password == "" || user.Interests == nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Email and password are required",
+			"error": "Email, password and interest are required",
 		})
 	}
 	existingUser, err := FindUser(user.Email)
@@ -93,18 +93,20 @@ func AddGift(c *fiber.Ctx) error {
 			"error": "Cannot parse JSON",
 		})
 	}
-	if req.Name == "" || req.Price == 0 {
+	if req.Name == "" || req.Price == 0 || req.Link == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Name and price are required",
+			"error": "Name, price and link are required",
 		})
 	}
-	if err := InsertGift(*req); err != nil {
+	giftId, err := InsertGift(*req)
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Cannot insert gift",
 		})
 	}
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "Gift created",
+		"giftId":  giftId,
 	})
 }
 

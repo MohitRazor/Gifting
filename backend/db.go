@@ -116,12 +116,12 @@ func GetGiftById(id string) (Gift, error) {
 	return gift, nil
 }
 
-func InsertGift(gift Gift) error {
-	_, err := mg.Db.Collection("gifts").InsertOne(context.TODO(), gift)
+func InsertGift(gift Gift) (string, error) {
+	id, err := mg.Db.Collection("gifts").InsertOne(context.TODO(), gift)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return id.InsertedID.(primitive.ObjectID).Hex(), nil
 }
 
 func GetGiftByIds(ids []string) ([]Gift, error) {
